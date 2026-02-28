@@ -1,31 +1,35 @@
 import streamlit as st
 from gtts import gTTS
-import openai
-import os
 
-st.title("🎙️ Reema's Voice Bot")
+st.set_page_config(page_title="Reema AI Voice Bot")
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+st.title("🎙️ Reema – AI Interview Voice Bot")
 
-user_input = st.text_input("Ask me anything:")
+st.write("Ask interview questions and I will respond as myself.")
+
+answers = {
+    "life story": "I am a final year student from India who is actively learning and experimenting with AI tools. Coming from a non privileged background taught me adaptability and resilience. I enjoy building practical solutions and learning by doing.",
+    "superpower": "My biggest strength is my ability to learn fast and adapt quickly. Even if I do not know something, I figure it out using research and experimentation.",
+    "grow": "The top three areas I want to grow in are public speaking, deeper understanding of AI systems, and leadership skills.",
+    "misconception": "Some people think I am quiet or reserved, but once comfortable I contribute actively and take ownership of my work.",
+    "boundaries": "I push my limits by taking on uncomfortable challenges, building real projects, and improving through feedback."
+}
+
+question = st.text_input("Ask me a question:")
 
 if st.button("Get Answer"):
-    if user_input != "":
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": user_input}]
-        )
+    response = "That is a great question. I am always learning and growing."
 
-        answer = response.choices[0].message["content"]
+    for key in answers:
+        if key in question.lower():
+            response = answers[key]
 
-        st.write(answer)
+    st.success(response)
 
-        # Convert text to speech
-        tts = gTTS(answer)
-        tts.save("response.mp3")
+    tts = gTTS(response)
+    tts.save("response.mp3")
 
-        # Play audio in browser
-        audio_file = open("response.mp3", "rb")
-        audio_bytes = audio_file.read()
+    audio_file = open("response.mp3", "rb")
+    audio_bytes = audio_file.read()
 
-        st.audio(audio_bytes, format="audio/mp3")
+    st.audio(audio_bytes, format="audio/mp3")
