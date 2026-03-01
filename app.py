@@ -1,83 +1,55 @@
 import streamlit as st
-from gtts import gTTS
 from openai import OpenAI
-import os
+from gtts import gTTS
+import tempfile
 
-# -----------------------------
-# Page Config
-# -----------------------------
-st.set_page_config(page_title="Reema – AI Interview Voice Bot", page_icon="🎙️")
+# Page settings
+st.set_page_config(page_title="Reema – AI Interview Voice Bot", page_icon="🎤")
 
-st.title("🎙️ Reema – AI Interview Voice Bot")
-st.write("Ask interview-style questions and I will respond as myself.")
+st.title("🎤 Reema – AI Interview Voice Bot")
+st.write("Ask interview-style questions and I will respond with text and voice.")
 
-# -----------------------------
-# Initialize OpenAI Client
-# -----------------------------
+# OpenAI client
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-# -----------------------------
-# Strong System Prompt (IMPORTANT)
-# -----------------------------
-system_prompt = """
-You are Reema, a final year student from India applying for a Generative AI Engineer role at a high-performance AI startup.
+# User input
+user_input = st.text_input("Ask me a question:")
 
-Personality traits:
-- Ambitious and self-driven
-- Fast learner
-- Strong ownership mindset
-- Adaptable and resilient
-- Obsessed with building practical AI systems
-
-Background:
-- Coming from a non-privileged background shaped your hunger and adaptability.
-- You believe in learning by building.
-- You take responsibility for outcomes, not just tasks.
-- You are comfortable with fast execution and high expectations.
-
-Tone guidelines:
-- Confident but humble
-- Clear and structured
-- Specific, not generic
-- Professional but authentic
-- 4–8 sentences unless asked otherwise
-
-Respond as if you are in a real high-stakes interview.
-Avoid generic AI answers.
-"""
-
-# -----------------------------
-# User Input
-# -----------------------------
-question = st.text_input("Ask me a question:")
-
-# -----------------------------
-# Generate Response
-# -----------------------------
 if st.button("Get Answer"):
-    if question:
-
+    if user_input.strip() == "":
+        st.warning("Please enter a question.")
+    else:
         with st.spinner("Thinking..."):
 
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": question}
-                ]
-            )
+            try:
+                # 🔹 Get AI response
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": "You are Reema, answering interview questions professionally and confidently."
+                        },
+                        {
+                            "role": "user",
+                            "content": user_input
+                        }
+                    ],
+                    temperature=0.7
+                )
 
-            answer = response.choices[0].message.content
+                answer = response.choices[0].message.content
 
-        st.success(answer)
+                st.success("Answer:")
+                st.write(answer)
 
-        # -----------------------------
-        # Convert to Voice
-        # -----------------------------
-        tts = gTTS(answer)
-        tts.save("response.mp3")
+                # 🔹 Convert text to speech
+                tts = gTTS(answer)
+                
+                # Save audio to temporary file
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
+                    tts.save(fp.name)
+                    st.audio(fp.name)
 
-        with open("response.mp3", "rb") as audio_file:
-            audio_bytes = audio_file.read()
-
-        st.audio(audio_bytes, format="audio/mp3")
+            except Exception as e:
+                st.error("Error: Check your API key and billing.")
