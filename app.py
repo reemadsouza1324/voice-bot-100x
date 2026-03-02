@@ -1,55 +1,79 @@
 import streamlit as st
-from openai import OpenAI
+import requests
 from gtts import gTTS
 import tempfile
+import os
 
-# Page settings
-st.set_page_config(page_title="Reema – AI Interview Voice Bot", page_icon="🎤")
+st.set_page_config(page_title="Reema – AI Voice Bot", page_icon="🎤")
 
 st.title("🎤 Reema – AI Interview Voice Bot")
-st.write("Ask interview-style questions and I will respond with text and voice.")
+st.write("Ask me anything. I will respond as Reema (with voice).")
 
-# OpenAI client
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 
-# User input
+SYSTEM_PROMPT = """
+You are Reema Dsouza, a final year student from India applying for a Generative AI Engineer role.
+
+Always answer in first person as Reema.
+Never say you are an AI.
+Be confident, professional, authentic, and growth-oriented.
+
+If asked your name, say: My name is Reema Dsouza.
+If asked how you are, respond naturally and positively.
+Answer all interview and general questions as yourself.
+"""
+
 user_input = st.text_input("Ask me a question:")
 
 if st.button("Get Answer"):
+
     if user_input.strip() == "":
         st.warning("Please enter a question.")
     else:
         with st.spinner("Thinking..."):
 
-            try:
-                # 🔹 Get AI response
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": "You are Reema, answering interview questions professionally and confidently."
-                        },
-                        {
-                            "role": "user",
-                            "content": user_input
-                        }
-                    ],
-                    temperature=0.7
-                )
+            headers = {
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json"
+            }
 
-                answer = response.choices[0].message.content
+            data = {
+                "model": "llama3-8b-8192",
+                "messages": [
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": user_input}
+                ],
+                "temperature": 0.7
+            }
 
-                st.success("Answer:")
-                st.write(answer)
+            response = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers=headers,
+                json=data
+            )
 
-                # 🔹 Convert text to speech
-                tts = gTTS(answer)
-                
-                # Save audio to temporary file
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
-                    tts.save(fp.name)
-                    st.audio(fp.name)
+            result = response.json()
+            answer = result["choices"][0]["message"]["content"]
 
-            except Exception as e:
-                st.error("Error: Check your API key and billing.")
+            st.success("Answer:")
+            st.write(answer)
+
+            # ----------- CREATE MP3 AUDIO -----------
+            tts = gTTS(text=answer, lang='en')
+
+            # Save temporary mp3 file
+            temp_audio = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+            tts.save(temp_audio.name)
+
+            # Play audio
+            audio_file = open(temp_audio.name, "rb")
+            audio_bytes = audio_file.read()
+            st.audio(audio_bytes, format="audio/mp3")
+
+            # Optional: show download button
+            st.download_button(
+                label="Download Audio",
+                data=audio_bytes,
+                file_name="reema_response.mp3",
+                mime="audio/mp3"
+            )
