@@ -17,6 +17,21 @@ def generate_answer(question):
 
     elif "how are you" in question:
         return "I am doing well and feeling excited about growing in the field of AI and analytics."
+        
+    elif "life story" in question:
+        return "I come from Mangalore, Karnataka, and my journey has been shaped by discipline, resilience, and curiosity. Growing up, I learned the importance of hard work and adaptability. Pursuing Computer Science and Statistics has strengthened my analytical thinking, and I continuously push myself to learn skills that prepare me for real-world challenges."
+
+    elif "superpower" in question:
+        return "My number one superpower is my ability to learn quickly and adapt to new situations. Even if I do not know something at first, I take initiative to research, practice, and master it efficiently."
+
+    elif "top 3" in question and "grow" in question:
+        return "The top three areas I would like to grow in are advanced AI and Machine Learning concepts, professional communication and public speaking, and leadership skills in technical and team-based environments."
+
+    elif "misconception" in question:
+        return "Some coworkers initially think I am quiet or reserved. However, once I understand the environment and goals, I actively contribute ideas, take responsibility, and collaborate confidently with the team."
+
+    elif "push your boundaries" in question or "limits" in question:
+        return "I push my boundaries by taking on challenging tasks that stretch my current skill level. Instead of avoiding difficult problems, I approach them as learning opportunities and stay consistent until I improve."
 
     elif "introduce yourself" in question or "about yourself" in question:
         return "I am currently pursuing BSc in Computer Science and Statistics at St Aloysius College, Mangalore, graduating in July 2026. I have a strong foundation in statistics and programming, and I enjoy applying analytical thinking to real world problems. I completed a data analytics internship and worked on rainfall trend analysis. I am adaptable, curious, and always ready to learn."
