@@ -15,7 +15,7 @@ def generate_answer(question):
     if "name" in question:
         return "My name is Reema Dsouza. I am from Mangalore, Karnataka."
 
-    elif "hey , hello , hi ," in question:
+    elif "hey" in question or "hello" in question or "hi" in question:
         return "Hello! I am Reema's AI Interview Voice Bot. You can ask me questions about my background, skills, and experiences."
 
     elif "how are you" in question:
