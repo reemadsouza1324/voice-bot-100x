@@ -18,6 +18,9 @@ def generate_answer(question):
     elif "how are you" in question:
         return "I am doing well and feeling excited about growing in the field of AI and analytics."
         
+    elif "Hey / hi /Hii" in question:
+        return "Hello !"
+        
     elif "life story" in question:
         return "I come from Mangalore, Karnataka, and my journey has been shaped by discipline, resilience, and curiosity. Growing up, I learned the importance of hard work and adaptability. Pursuing Computer Science and Statistics has strengthened my analytical thinking, and I continuously push myself to learn skills that prepare me for real-world challenges."
 
