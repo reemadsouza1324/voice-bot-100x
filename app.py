@@ -16,7 +16,7 @@ def generate_answer(question):
         return "My name is Reema Dsouza. I am from Mangalore, Karnataka."
 
     elif "hey , hello , hi ," in question:
-    return "Hello! I am Reema's AI Interview Voice Bot. You can ask me questions about my background, skills, and experiences."
+        return "Hello! I am Reema's AI Interview Voice Bot. You can ask me questions about my background, skills, and experiences."
 
     elif "how are you" in question:
         return "I am doing well and feeling excited about growing in the field of AI and analytics."
