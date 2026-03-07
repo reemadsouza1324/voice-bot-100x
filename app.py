@@ -18,7 +18,7 @@ def generate_answer(question):
     elif "how are you" in question:
         return "I am doing well and feeling excited about growing in the field of AI and analytics."
         
-    elif "Hey / hi /Hii" in question:
+    elif "Hey or hi or Hii" in question:
         return "Hello !"
         
     elif "life story" in question:
